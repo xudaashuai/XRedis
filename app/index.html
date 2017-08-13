@@ -24,21 +24,21 @@
             <div v-if="show" class="info">
                 <div class="key">
                     <h2 v-if="!rename"><i class="icon icon-key"></i>{{key}}</h2>
-                    <button class="btn btn-primary">rename</button>
-                    <button class="btn btn-danger">delete</button>
+                    <button class="btn btn-primary">重命名</button>
+                    <button class="btn btn-danger">删除此键</button>
                 </div>
                 <div v-if="rename"><input type="text">
                     <button><i class="icon-ok"></i></button>
                     <button><i class="icon-remove"></i></button>
                 </div>
                 <div class="info-text">
-                    <h4 v-if=" type!==null"><i class="icon icon-tag"></i>type : {{type}}</h4>
-                    <h4 v-if="length!==null"><i class="icon icon-tag"></i>size : {{length}}</h4>
+                    <h4 v-if=" type!==null"><i class="icon icon-tag"></i>类型 : {{type}}</h4>
+                    <h4 v-if="length!==null"><i class="icon icon-tag"></i>大小 : {{length}}</h4>
                 </div>
             </div>
 
         </div>
-        <div style="height: 1px;width: 100%;background-color: #0f0f0f"></div>
+        <div style="min-height: 1px;width: 100%;background-color: #0f0f0f;z-index: 100"></div>
         <div class="right-b">
             <div class="page-control" id="page-control">
                 <div class="page-control-content" v-if="true">
@@ -49,16 +49,18 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">页码</span>
-                        <input type="number" class="form-control" :value="cursor">
+                        <input type="number" class="form-control" :value="cursor" v-model="inputCursor">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" style="padding-bottom: 6.5px" type="button"><i class="icon-arrow-right"></i></button>
+                            <button class="btn btn-default" v-on:click="refresh" type="button"><i
+                                    class="icon-arrow-right"></i></button>
                         </span>
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">每页个数</span>
-                        <input type="number" class="form-control" :value="pageSize">
+                        <input type="number" class="form-control" :value="pageSize" v-model="inputPageSize">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" style="padding-bottom: 6.5px" type="button"><i class="icon-arrow-right"></i></button>
+                            <button class="btn btn-default" type="button" v-on:click="refresh"><i
+                                    class="icon-arrow-right"></i></button>
                         </span>
                     </div>
 
@@ -66,12 +68,17 @@
             </div>
             <div class="data">
                 <table class="table table-bordered" id="table">
-                    <tr>
+                    <tr v-if="type === 'hash'">
+                        <th></th>
+                        <th>keys</th>
+                        <th>value</th>
+                    </tr>
+                    <tr v-else>
                         <th></th>
                         <th>value</th>
                     </tr>
                     <tr is="tr-item" v-for="(item,index) in result"
-                        v-bind:res="item" v-bind:index="index"></tr>
+                        v-bind:res="item" v-bind:index="index" v-bind:type="type"></tr>
                 </table>
             </div>
         </div>

@@ -1,6 +1,6 @@
 {
     "name": "XRedis",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "基于Electron的Redis管理软件",
     "main": "main.js",
     "scripts": {
@@ -11,8 +11,8 @@
         "redis",
         "database"
     ],
+    "repository": "https://github.com/xudaashuai/XRedis",
     "author": "xudashuai",
-    "license": "CC0-1.0",
     "devDependencies": {
         "electron": "~1.6.2"
     },

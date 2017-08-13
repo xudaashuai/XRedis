@@ -1,0 +1,8 @@
+:root{
+    --color--nav--back : hsl(0,0%,90%);
+    --color--nav--button--hover : hsl(0,0%,80%);
+    --color--nav--button--selected : hsl(0,0%,50%);
+}
+body{
+    font: caption;
+}

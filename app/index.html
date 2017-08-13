@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>XRedis</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <script src="js/vue.js"></script>
+</head>
+<body>
+    <div class="left" id='tree'>
+        <tree-item id="root"
+                   v-bind:node="node">
+        </tree-item>
+    </div>
+    <div class="right">
+        <div class="top-r" id="info">
+            <div v-if="show" class="info">
+                <div class="key">
+                    <h2 v-if="!rename"><i class="icon icon-key"></i>{{key}}</h2>
+                    <button class="btn btn-primary">rename</button>
+                    <button class="btn btn-danger">delete</button>
+                </div>
+                <div v-if="rename"><input type="text">
+                    <button><i class="icon-ok"></i></button>
+                    <button><i class="icon-remove"></i></button>
+                </div>
+                <div class="info-text">
+                    <h4 v-if=" type!==null"><i class="icon icon-tag"></i>type : {{type}}</h4>
+                    <h4 v-if="length!==null"><i class="icon icon-tag"></i>size : {{length}}</h4>
+                </div>
+            </div>
+
+        </div>
+        <div style="height: 1px;width: 100%;background-color: #0f0f0f"></div>
+        <div class="right-b">
+            <div class="page-control" id="page-control">
+                <div class="page-control-content" v-if="true">
+                    <div class="input-group">
+                        <span class="input-group-addon">总页数</span>
+                        <input type="number" class="form-control" :value="pageCount" disabled="disabled">
+
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">页码</span>
+                        <input type="number" class="form-control" :value="cursor">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" style="padding-bottom: 6.5px" type="button"><i class="icon-arrow-right"></i></button>
+                        </span>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">每页个数</span>
+                        <input type="number" class="form-control" :value="pageSize">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" style="padding-bottom: 6.5px" type="button"><i class="icon-arrow-right"></i></button>
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="data">
+                <table class="table table-bordered" id="table">
+                    <tr>
+                        <th></th>
+                        <th>value</th>
+                    </tr>
+                    <tr is="tr-item" v-for="(item,index) in result"
+                        v-bind:res="item" v-bind:index="index"></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery.js"></script>
+    <script src="js/redis.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        require('./js/nav')
+    </script>
+</body>
+</html>

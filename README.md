@@ -1,0 +1,2 @@
+# XRedis
+Electron redis GUI

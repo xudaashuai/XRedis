@@ -22,7 +22,8 @@ function createWindow() {
         width: 800, height: 600,
         webPreferences: {
             webSecurity: false
-        }
+        },
+        "icon":__dirname + '/app/img/icon.png'
     })
     //
     id=mainWindow.id

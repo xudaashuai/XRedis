@@ -216,7 +216,7 @@ ipcRenderer.on('load_connect', function (event) {
 });
 ipcRenderer.on('add_connect_success', function (event, i) {
     clients = remote.getGlobal('clients');
-    tree.nodes[i] = new Node(clients[i].data.name, NODE_TYPE.CONNECTION);
+    tree.nodes[i] = new Node(clients[i].data.name, NODE_TYPE.CONNECTION,i);
     freshArray(tree.nodes, i)
 });
 ipcRenderer.on('connect_success', function (event, pos) {

@@ -15,6 +15,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
     background-color: #5cb85c;
+    border-radius: 6px;
 }
 
 .left {
@@ -29,7 +30,9 @@ body {
     margin: 0;
     padding: 10px;
 }
-
+[class~=glyphicon] {
+    cursor: hand;
+}
 .right {
     top: 0;
     flex-grow: 1;
@@ -136,12 +139,12 @@ span .btn{
 }
 
 .node-1 {
-    background-color: hsl(0, 0%, 95%);
+    !important background-color: hsl(0, 0%, 95%);
     padding-left: 15px;
 }
 
 .node-2 {
-    background-color: hsl(0, 0%, 90%);
+    !important background-color: hsl(0, 0%, 90%);
     padding-left: 30px;
 }
 
@@ -155,6 +158,9 @@ span .btn{
     padding-left: 60px;
 }
 .selected{
-    background-color: #4cae4c;
+    background-color: #3e8f3e !important ;
+}
+tr :hover,.left div :hover ,:focus{
+    background-color: #5cb85c;
 }
 

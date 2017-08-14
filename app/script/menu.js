@@ -4,16 +4,20 @@
 const {Menu, ipcMain, app, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
-exports.createConnectWindow = function (pa) {
+exports.createConnectWindow = function () {
     let createConntectionWindows = new BrowserWindow({
         width: 400,
         height: 400,
-        backgroundColor:'#8c8c8c',
-        parent: pa, modal: true, show: true
+        backgroundColor: '#8c8c8c',
+        parent: mainWindow,
+        modal: true,
+        show: false
     })
+    createConntectionWindows.on('ready-to-show',()=>{createConntectionWindows.show()})
     createConntectionWindows.loadURL(url.format({
         pathname: path.join(__dirname, '../connection.html'),
         protocol: 'file:',
         slashes: true
     }))
+
 }

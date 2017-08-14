@@ -3,30 +3,34 @@
  */
 const redis = require('redis')
 function reloadKeys(node) {
+    client=cs[node.pos]
     client.select(parseInt(node.text[node.text.length - 1]), function () {
         client.keys('*', function (err, mes) {
             node.nodes = []
             for (let i = 0; i < mes.length; i++) {
                 client.type(mes[i], function (err, mess) {
-                    console.log(mess)
-                    node.nodes.push(new Node(mes[i],NODE_TYPE.KEY,VALUE_TYPE[mess]))
+                    node.nodes.push(new Node(mes[i],NODE_TYPE.KEY,VALUE_TYPE[mess],node.pos))
+                    node.loaded=''
                 })
             }
         })
     })
+
 }
 function reloadDatabase(node) {
+    client=cs[node.pos]
     client.config('GET', "databases", function (err, mes) {
         dbsize = mes[1]
         node.nodes = []
         for (let i = 0; i < dbsize; i++) {
-            node.nodes.push(new Node("DB" + i.toString(), NODE_TYPE.DATABASE, null))
+            node.nodes.push(new Node("DB" + i.toString(), NODE_TYPE.DATABASE, null,node.pos))
         }
         node.open=true
     })
 }
 
 function show(node, table, info, page) {
+    client=cs[node.pos]
     table.type = node.valueType
     info.type = node.valueType
     info.key = node.text
@@ -34,13 +38,10 @@ function show(node, table, info, page) {
     info.length = null
     let cursor = page.cursor
     let pageSize = page.pageSize
-    console.log(cursor)
-    console.log(pageSize)
     switch (node.valueType) {
         case VALUE_TYPE.string:
             info.length=1
             client.get(node.text, function (err, mes) {
-                console.log(mes)
                 table.result = [mes,]
             })
             break;
@@ -60,7 +61,6 @@ function show(node, table, info, page) {
             })
             client.zscan(node.text, (cursor - 1) * pageSize, 'COUNT', pageSize, function (err, mes) {
                 table.result = mes[1]
-                console.log(mes)
             })
             break;
         case VALUE_TYPE.hash:
@@ -69,7 +69,6 @@ function show(node, table, info, page) {
                 page.pageCount = Math.ceil(info.length / pageSize)
             })
             client.hscan(node.text, (cursor - 1) * pageSize, 'COUNT', pageSize, function (err, mes) {
-                console.log(mes)
                 mes=mes[1]
                 let m=[]
                 for(let i=0;i<mes.length;i+=2){
@@ -85,7 +84,6 @@ function show(node, table, info, page) {
             })
             client.lrange(node.text, (cursor - 1) * pageSize,cursor*pageSize-1,function (err, mes) {
                 table.result = mes
-                console.log(mes)
             })
             break;
     }

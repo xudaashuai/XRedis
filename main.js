@@ -4,36 +4,31 @@ const path = require('path')
 const url = require('url')
 const m = require('./app/script/menu')
 const c = require('./app/script/connect')
+const config = require('./app/script/configStore')
 const redis=require('redis')
 require('./app/script/event')
 ipcMain.on('close-main-window', function () {
     app.quit();
 });
-
+clients=[]
+cs=[]
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
-function ccw() {
-    m.createConnectWindow(mainWindow)
-}
+mainWindow = null
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 800, height: 600,
-        webPreferences: {
-            webSecurity: false
-        },
+        show:false,
         "icon":__dirname + '/app/img/icon.png'
     })
-    //
-    id=mainWindow.id
     const template = [
         {
             label: '连接',
             submenu: [
                 {
                     label: '新建连接',
-                    click: ccw
+                    click: m.createConnectWindow
                 },
             ]
         }, {
@@ -56,9 +51,16 @@ function createWindow() {
         protocol: 'file:',
         slashes: true
     }))
-
-    client = redis.createClient('6379','101.236.6.203')
-    mainWindow.webContents.send('load_client')
+    process.on('uncaughtexception',(err)=>{
+        console.log(err)
+        console.log('uncaught')
+    })
+    let r=config.getConnections()
+    r.forEach(function (d) {
+        clients.push({data:d})
+        cs.push({})
+    })
+    mainWindow.webContents.send('load_connect')
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
 
@@ -69,6 +71,7 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+    mainWindow.on('ready-to-show',()=>{mainWindow.show()})
 }
 
 // This method will be called when Electron has finished

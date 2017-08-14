@@ -15,8 +15,7 @@
 </head>
 <body>
     <div class="left" id='tree'>
-        <tree-item id="root"
-                   v-bind:node="node">
+        <tree-item v-for="(node,index) in nodes" v-bind:node="node" v-bind:key="index">
         </tree-item>
     </div>
     <div class="right">
@@ -63,6 +62,7 @@
                                     class="icon-arrow-right"></i></button>
                         </span>
                     </div>
+                    <s-input v-bind:attr="{}"></s-input>
 
                 </div>
             </div>

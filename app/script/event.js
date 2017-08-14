@@ -1,16 +1,21 @@
 /**
  * Created by xudas on 2017/8/12.
  */
-const {ipcMain,app,BrowserWindow} = require('electron');
-const redis=require('redis')
-const connect=require('../script/connect')
-ipcMain.on('connect',function (event,data) {
-
-    console.log(data)
-    client = redis.createClient(data.port,data.host)
-    client.on("error", function (err) {
-        console.log("Error " + err);
-    });
-    event.returnValue=true
-    BrowserWindow.fromId(id).webContents.send('load_client')
+const {ipcMain, app, BrowserWindow,webContents} = require('electron');
+const redis = require('redis')
+const redisController = require('./redisController')
+const config = require('./configStore')
+const connect = require('./connect')
+ipcMain.on('add_connect', function (event, data) {
+    if (config.addConnect(data)) {
+        clients.push({data: data})
+        cs.push({})
+        event.returnValue = true
+        mainWindow.webContents.send('add_connect_success',clients.length-1)
+    } else {
+        event.returnValue = false
+    }
+})
+ipcMain.on('connect', function (event, pos) {
+    redisController.connect(clients[pos].data,pos)
 })

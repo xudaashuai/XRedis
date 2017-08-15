@@ -11,6 +11,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/flat-ui.css" rel="stylesheet">
     <script src="js/vue.js"></script>
 </head>
 <body>
@@ -43,7 +44,7 @@
                 <div class="page-control-content" v-if="true">
                     <div class="input-group">
                         <span class="input-group-addon">总页数</span>
-                        <input type="number" class="form-control" :value="pageCount" disabled="disabled">
+                        <input type="number" class="form-control" :value="pageCount" readonly="readonly">
 
                     </div>
                     <div class="input-group">
@@ -62,33 +63,26 @@
                                     class="icon-arrow-right"></i></button>
                         </span>
                     </div>
-                    <s-input v-bind:attr="{}"></s-input>
 
                 </div>
             </div>
             <div class="data">
                 <table class="table table-bordered" id="table">
-                    <tr v-if="type === 'hash'">
-                        <th></th>
-                        <th>keys</th>
-                        <th>value</th>
-                    </tr>
-                    <tr v-else>
-                        <th></th>
-                        <th>value</th>
+                    <tr>
+                        <th>index</th>
+                        <th v-for="t in headers">{{t}}</th>
                     </tr>
                     <tr is="tr-item" v-for="(item,index) in result"
-                        v-bind:res="item" v-bind:index="index" v-bind:type="type"></tr>
+                        v-bind:res="item" v-bind:index="index" ></tr>
                 </table>
             </div>
         </div>
     </div>
     <script src="js/jquery.js"></script>
+    <script src="js/vendor/jquery.min.js"></script>
     <script src="js/redis.js"></script>
     <script src="js/index.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script>
-        require('./js/nav')
-    </script>
+    <script src="js/flat-ui.min.js"></script>
 </body>
 </html>

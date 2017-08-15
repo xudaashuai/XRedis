@@ -6,13 +6,14 @@ const path = require('path')
 const url = require('url')
 exports.createConnectWindow = function () {
     let createConntectionWindows = new BrowserWindow({
-        width: 400,
-        height: 400,
+        width: 375,
+        height: 320,
         backgroundColor: '#8c8c8c',
         parent: mainWindow,
         modal: true,
-        show: false
+        show: false,
     })
+    //createConntectionWindows.setMenu(null)
     createConntectionWindows.on('ready-to-show',()=>{createConntectionWindows.show()})
     createConntectionWindows.loadURL(url.format({
         pathname: path.join(__dirname, '../connection.html'),

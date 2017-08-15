@@ -4,8 +4,14 @@
 const {ipcRenderer, remote} = require('electron');
 clients = remote.getGlobal('clients');
 cs = remote.getGlobal('cs');
+date=new Date()
+function getTime() {
+    let h=date.getHours()
+    let m=date.getMinutes()
+    return (h.length===1?'0':'')+h+':'+(m.length===1?'0':'')+m
+}
 class Node {
-    constructor(text, type, valueType, pos = 0) {
+    constructor(text, type, valueType, pos = 0, end = false) {
         this.text = text;
         this.type = type;
         this.valueType = valueType;
@@ -15,10 +21,27 @@ class Node {
         this.pos = pos;
         this.data = {};
         this.no = '';
-        this.loaded=false
+        this.loaded = false
+        this.end = end
         this.status = 'hidden'
+        this.mes=''
     }
-
+    loadStart(){
+        this.status = 'icon-spinner'
+        this.mes='正在加载中'
+        $(function () {
+            $('[data-toggle=tooltip]').tooltip();
+        });
+    }
+    loadEnd(){
+        this.loaded=true
+        this.open=true
+        this.status = 'icon-ok'
+        this.mes='加载于'+getTime()
+        $(function () {
+            $('[data-toggle=tooltip]').tooltip();
+        });
+    }
     clearSelect() {
         this.selected = false;
         for (let i = 0; i < this.nodes.length; i++) {
@@ -31,6 +54,7 @@ class Node {
         this.selected = true;
     }
 }
+
 NODE_TYPE = {
     CONNECTION: 1,
     DATABASE: 2,
@@ -58,14 +82,9 @@ Vue.component('s-input', {
 Vue.component('tr-item', {
     props: ['res', 'index', 'type'],
     template: `
-<tr v-if=" type !=='hash'">
+<tr>
     <td>{{getIndex()}}</td>
-    <td>{{typeof res==='string'?"'"+res+"'":res}}</td>
-</tr>
-<tr v-else>
-    <td>{{getIndex()}}</td>
-    <td>{{typeof res[0]==='string'?"'"+res[0]+"'":res[0]}}</td>
-    <td>{{typeof res[1]==='string'?"'"+res[1]+"'":res[1]}}</td>
+    <td v-for="v in res">{{typeof v==='string'?"'"+v+"'":v}}</td>
 </tr>`,
     methods: {
         getIndex: function () {
@@ -83,18 +102,18 @@ Vue.component('tree-item', {
         },
         spanClick: function (event) {
             if (this.node.loaded)
-            switch (this.node.type) {
-                case NODE_TYPE.CONNECTION:
-                case NODE_TYPE.NAMESPACE:
-                    this.node.open = !this.node.open;
-                    break;
-                case NODE_TYPE.DATABASE:
-                    this.node.open = !this.node.open;
-                    break;
-                case NODE_TYPE.KEY:
-                    this.select();
-                    break
-            }else{
+                switch (this.node.type) {
+                    case NODE_TYPE.CONNECTION:
+                    case NODE_TYPE.NAMESPACE:
+                        this.node.open = !this.node.open;
+                        break;
+                    case NODE_TYPE.DATABASE:
+                        this.node.open = !this.node.open;
+                        break;
+                    case NODE_TYPE.KEY:
+                        this.select();
+                        break
+                } else {
                 this.dbclick()
             }
         },
@@ -110,34 +129,33 @@ Vue.component('tree-item', {
                     break;
                 case NODE_TYPE.NAMESPACE:
                     reloadNamespace(this.node);
-                    this.node.open = true;
                     break;
                 case NODE_TYPE.DATABASE:
                     reloadKeys(this.node);
-                    this.node.open = true;
                     break;
                 case NODE_TYPE.KEY:
                     this.select();
                     break
             }
         },
-        select: function () {
+        select: function (s = true) {
             tree.selectedNode = this.node;
             this.node.select();
-            show(this.node, table, info, page)
+            if (s) show(this.node, table, info, page)
         }
     },
-    template: `<div>
-                    <p :class="'tree-item-text '+(node.selected?'selected ':'')+('node-'+node.type.toString()+' ')+node.no" v-on:dblclick.stop="dbclick" v-on:click="click">
-                    <span :class="node.end?'glyphicon glyphicon-menu-right':node.open?'glyphicon glyphicon-minus':'glyphicon glyphicon-plus'"
+    template: `<div >
+                    <p :class="['tree-item-text', {selected:node.selected},'node-'+node.type.toString()]" v-on:dblclick.stop="dbclick" v-on:click="click">
+                    <span :class="['glyphicon',{'glyphicon-menu-right':node.end},node.open?'glyphicon-minus':'glyphicon-plus']"
                         aria-hidden="true"style="margin-right: 5px" v-on:click="spanClick"></span>
-                    {{node.text}}<span :class="'glyphicon '+node.status"aria-hidden="true"style="margin-right: 5px; float :right" v-on:click="spanClick"></span></p>
+                    {{node.text}}<span :class="['glyphicon ',node.status]"aria-hidden="true"style="margin-top:5px;float:right"
+                    data-placement="right" data-toggle="tooltip" :data-original-title="node.mes"></span></p>
                        <tree-item
                           v-if="node.open"
                           v-for="item in node.nodes"
                           v-bind:node="item"
                           v-bind:key="item.text">
-                        </tree-item>
+                       </tree-item>
                 </div>`
 });
 var tree = new Vue({
@@ -185,7 +203,8 @@ var page = new Vue({
 var table = new Vue({
     el: '#table',
     data: {
-        result: [null]
+        result: [],
+        headers: []
     }
 });
 var info = new Vue({
@@ -198,9 +217,11 @@ var info = new Vue({
         rename: false,
     }
 });
+
 function freshArray(a, b) {
     Vue.set(a, b, a[b])
 }
+
 clients = remote.getGlobal('clients');
 for (let i = 0; i < clients.length; i++) {
     if (tree.nodes[i] !== null && tree.nodes[i] !== undefined) {

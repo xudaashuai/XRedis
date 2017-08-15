@@ -9,36 +9,56 @@
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+    <link href="css/flat-ui.css" rel="stylesheet">
+    <script src="js/vue.js"></script>
 </head>
 <style>
-    .input {
-        padding: 20px;
-        margin: 20px;
+    body {
+        background-color: #bbbbbb;
     }
-    body{
-        background-color:#8c8c8c
+
+    .input-group {
+        padding-top: 10px;
+        width: 250px;
     }
+
 </style>
 <body>
-    <div class="container">
+    <div class="container" id='form'>
         <div class="input">
-            <div class="form-group ">
-                <input type="text" class="form-control " id="name" placeholder="连接名" value="新建连接">
+            <div class="input-group ">
+
+                <span class="input-group-addon">连接名</span>
+                <input type="text" class="form-control " id="name" v-model="data.name">
             </div>
-            <div class="form-group ">
-                <input type="text" class="form-control " id="host" placeholder="主机地址" value="101.236.6.203">
+            <div class="input-group ">
+                <span class="input-group-addon">主机地址</span>
+                <input type="text" class="form-control " id="host" v-model="data.host">
             </div>
-            <div class="form-group">
-                <input type="number" class="form-control" id="port" placeholder="端口" value="6379">
+            <div class="input-group">
+                <span class="input-group-addon">端口</span>
+                <input type="number" class="form-control" id="port" v-model="data.port">
             </div>
-            <div class="form-group">
-                <input type="number" class="form-control" id="pass" placeholder="密码" value="19980819">
+            <div class="input-group">
+                <span class="input-group-addon">密码</span>
+                <input type="text" class="form-control" v-model="data.pass">
             </div>
-            <button class="btn btn-default" id="submit">Submit</button>
+            <div class="input-group">
+                <button class="btn btn-primary" style="width: 250px" @click="submit">确定</button>
+            </div>
         </div>
     </div>
-    <script src="js/jquery.js"></script>
-    <script src="js/connection.js"></script>
+    <script src="js/jquery.js"/>
+    <script src="js/vendor/jquery.min.js"></script>
+    <script src="js/redis.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/flat-ui.min.js"></script>
+    <script src="js/connection.js"></script>
+    <script>
+        require('./js/nav')
+    </script>
 </body>
 </html>

@@ -3,6 +3,7 @@
  */
 const redis = require('redis')
 function reloadKeys(node) {
+    node.status='icon-spinner'
     client=cs[node.pos]
     client.select(parseInt(node.text[node.text.length - 1]), function () {
         client.keys('*', function (err, mes) {
@@ -10,14 +11,18 @@ function reloadKeys(node) {
             for (let i = 0; i < mes.length; i++) {
                 client.type(mes[i], function (err, mess) {
                     node.nodes.push(new Node(mes[i],NODE_TYPE.KEY,VALUE_TYPE[mess],node.pos))
-                    node.loaded=''
+
                 })
             }
+            node.loaded=true
+            node.status='icon-ok'
         })
     })
 
 }
 function reloadDatabase(node) {
+
+    node.status='icon-spinner'
     client=cs[node.pos]
     client.config('GET', "databases", function (err, mes) {
         dbsize = mes[1]
@@ -26,6 +31,8 @@ function reloadDatabase(node) {
             node.nodes.push(new Node("DB" + i.toString(), NODE_TYPE.DATABASE, null,node.pos))
         }
         node.open=true
+        node.loaded=true
+        node.status='icon-ok'
     })
 }
 
@@ -38,11 +45,13 @@ function show(node, table, info, page) {
     info.length = null
     let cursor = page.cursor
     let pageSize = page.pageSize
+    node.status='icon-spinner'
     switch (node.valueType) {
         case VALUE_TYPE.string:
             info.length=1
             client.get(node.text, function (err, mes) {
                 table.result = [mes,]
+                node.status='icon-ok'
             })
             break;
         case VALUE_TYPE.set:
@@ -52,6 +61,7 @@ function show(node, table, info, page) {
             })
             client.sscan(node.text, (cursor - 1) * pageSize, 'COUNT', pageSize, function (err, mes) {
                 table.result = mes[1]
+                node.status='icon-ok'
             })
             break;
         case VALUE_TYPE.zset:
@@ -61,6 +71,7 @@ function show(node, table, info, page) {
             })
             client.zscan(node.text, (cursor - 1) * pageSize, 'COUNT', pageSize, function (err, mes) {
                 table.result = mes[1]
+                node.status='icon-ok'
             })
             break;
         case VALUE_TYPE.hash:
@@ -75,6 +86,7 @@ function show(node, table, info, page) {
                     m.push([mes[i],mes[i+1]])
                 }
                 table.result = m
+                node.status='icon-ok'
             })
             break;
         case VALUE_TYPE.list:
@@ -84,6 +96,7 @@ function show(node, table, info, page) {
             })
             client.lrange(node.text, (cursor - 1) * pageSize,cursor*pageSize-1,function (err, mes) {
                 table.result = mes
+                node.status='icon-ok'
             })
             break;
     }

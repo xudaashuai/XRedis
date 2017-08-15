@@ -15,7 +15,8 @@ class Node {
         this.pos = pos;
         this.data = {};
         this.no = '';
-        this.loaded = 'hidden'
+        this.loaded=false
+        this.status = 'hidden'
     }
 
     clearSelect() {
@@ -44,9 +45,9 @@ VALUE_TYPE = {
     list: "list",
     hash: "hash",
 };
-Vue.component('s-input',{
-    props:['attr'],
-    template:`<div class="input-group">
+Vue.component('s-input', {
+    props: ['attr'],
+    template: `<div class="input-group">
                         <span class="input-group-addon">{{attr.info}}</span>
                         <input :type="attr.inputType" class="form-control" :value="attr.value" v-model="attr.inputValue">
                         <span class="input-group-btn">
@@ -81,6 +82,7 @@ Vue.component('tree-item', {
             }
         },
         spanClick: function (event) {
+            if (this.node.loaded)
             switch (this.node.type) {
                 case NODE_TYPE.CONNECTION:
                 case NODE_TYPE.NAMESPACE:
@@ -92,6 +94,8 @@ Vue.component('tree-item', {
                 case NODE_TYPE.KEY:
                     this.select();
                     break
+            }else{
+                this.dbclick()
             }
         },
         dbclick: function (event) {
@@ -127,7 +131,7 @@ Vue.component('tree-item', {
                     <p :class="'tree-item-text '+(node.selected?'selected ':'')+('node-'+node.type.toString()+' ')+node.no" v-on:dblclick.stop="dbclick" v-on:click="click">
                     <span :class="node.end?'glyphicon glyphicon-menu-right':node.open?'glyphicon glyphicon-minus':'glyphicon glyphicon-plus'"
                         aria-hidden="true"style="margin-right: 5px" v-on:click="spanClick"></span>
-                    {{node.text}}<span :class="'glyphicon '+node.loaded"aria-hidden="true"style="margin-right: 5px; float :right" v-on:click="spanClick"></span></p>
+                    {{node.text}}<span :class="'glyphicon '+node.status"aria-hidden="true"style="margin-right: 5px; float :right" v-on:click="spanClick"></span></p>
                        <tree-item
                           v-if="node.open"
                           v-for="item in node.nodes"
@@ -216,11 +220,11 @@ ipcRenderer.on('load_connect', function (event) {
 });
 ipcRenderer.on('add_connect_success', function (event, i) {
     clients = remote.getGlobal('clients');
-    tree.nodes[i] = new Node(clients[i].data.name, NODE_TYPE.CONNECTION,i);
+    tree.nodes[i] = new Node(clients[i].data.name, NODE_TYPE.CONNECTION, i);
     freshArray(tree.nodes, i)
 });
 ipcRenderer.on('connect_success', function (event, pos) {
-        cs = remote.getGlobal('cs')
+    cs = remote.getGlobal('cs')
     reloadDatabase(tree.nodes[pos]);
     freshArray(tree.nodes, pos)
 });

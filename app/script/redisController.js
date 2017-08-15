@@ -2,9 +2,14 @@
  * Created by xudas on 2017/8/14.
  */
 const redis=require('redis')
+error =null
 exports.connect=function (data,pos) {
     client = redis.createClient(data.port, data.host,'pass' in data? {auth_pass: data.pass}:{})
     client.on("error", function (err) {
+        for(let k in err){
+            console.log(err[k])
+        }
+        error =err
         console.log("Error happen on" + data.name + err);
     });
     client.on('ready',function () {

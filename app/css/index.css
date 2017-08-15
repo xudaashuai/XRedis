@@ -30,8 +30,12 @@ body {
     margin: 0;
     padding: 10px;
 }
-[class~=glyphicon] {
-    cursor: hand;
+.tree-item-text span{
+    padding-right: 10px;
+}
+.tree-item-text :hover{
+    color: #efefef;
+    background-color: transparent !important;
 }
 .right {
     top: 0;
@@ -139,12 +143,12 @@ span .btn{
 }
 
 .node-1 {
-    !important background-color: hsl(0, 0%, 95%);
+     background-color: hsl(0, 0%, 95%);
     padding-left: 15px;
 }
 
 .node-2 {
-    !important background-color: hsl(0, 0%, 90%);
+     background-color: hsl(0, 0%, 90%);
     padding-left: 30px;
 }
 
@@ -158,9 +162,10 @@ span .btn{
     padding-left: 60px;
 }
 .selected{
-    background-color: #3e8f3e !important ;
+    background-color: #3e9f6e !important ;
 }
 tr :hover,.left div :hover ,:focus{
-    background-color: #5cb85c;
+    background-color: #6cc86c;
 }
+
 

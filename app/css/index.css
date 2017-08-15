@@ -25,10 +25,14 @@ body {
     padding: 0;
     -webkit-user-select:none;
 }
-
+.tree-item{
+    display: flex;
+    align-items: center;
+}
 .tree-item-text {
     margin: 0;
     padding: 10px;
+    flex-grow: 1;
 }
 .tree-item-text span{
     padding-right: 10px;
